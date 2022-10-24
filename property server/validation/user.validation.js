@@ -1,0 +1,49 @@
+const Joi = require("Joi");
+//firstName, lastName, email, password, phone
+
+const firstNameRole = {
+  firstName: Joi.string().min(2).max(255).trim().alphanum().required(),
+};
+const lastNameRole = {
+  lastName: Joi.string().min(2).max(255).trim().alphanum().required(),
+};
+
+const emailRole = {
+  email: Joi.string().email().min(6).max(255).trim().required(),
+};
+const passwordRole = {
+  password: Joi.string()
+    .regex(
+      new RegExp(
+        "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*() ]).{6,12}$"
+      )
+    )
+    .required(),
+};
+
+const phoneRole = {
+  phone: Joi.string().min(3).max(255).trim(),
+};
+
+const signupSchema = Joi.object({
+  ...firstNameRole,
+  ...lastNameRole,
+  ...emailRole,
+  ...passwordRole,
+  ...phoneRole,
+});
+
+const loginSchema = Joi.object({
+  ...emailRole,
+  ...passwordRole,
+});
+
+const validateSignupSchema = (data) => {
+  return signupSchema.validateAsync(data, { abortEarly: false });
+};
+
+const validateLoginSchema = (data) => {
+  return loginSchema.validateAsync(data, { abortEarly: false });
+};
+
+module.exports = { validateSignupSchema, validateLoginSchema };
