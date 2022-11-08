@@ -20,9 +20,22 @@ const passwordRole = {
     )
     .required(),
 };
+const confirmPasswordRole = {
+  confirmPassword: Joi.string()
+    .regex(
+      new RegExp(
+        "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*() ]).{6,12}$"
+      )
+    )
+    .required(),
+};
 
 const phoneRole = {
   phone: Joi.string().min(3).max(255).trim(),
+};
+
+const isAdminRole = {
+  isAdmin: Joi.boolean().required(),
 };
 
 const signupSchema = Joi.object({
@@ -30,12 +43,18 @@ const signupSchema = Joi.object({
   ...lastNameRole,
   ...emailRole,
   ...passwordRole,
+  ...confirmPasswordRole,
   ...phoneRole,
+  ...isAdminRole,
 });
 
 const loginSchema = Joi.object({
   ...emailRole,
   ...passwordRole,
+});
+
+const forgetPasswordSchema = Joi.object({
+  ...emailRole,
 });
 
 const validateSignupSchema = (data) => {
@@ -45,5 +64,12 @@ const validateSignupSchema = (data) => {
 const validateLoginSchema = (data) => {
   return loginSchema.validateAsync(data, { abortEarly: false });
 };
+const validateForgetPasswordSchemaSchema = (data) => {
+  return loginSchema.validateAsync(data, { abortEarly: false });
+};
 
-module.exports = { validateSignupSchema, validateLoginSchema };
+module.exports = {
+  validateSignupSchema,
+  validateLoginSchema,
+  validateForgetPasswordSchemaSchema,
+};

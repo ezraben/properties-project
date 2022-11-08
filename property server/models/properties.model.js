@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 /* create user schema */ const propertiesSchema = new Schema({
   // img: { type: Image, required: false },
+  // img: { type: String, required: false },
   price: { type: Number, required: true },
   description: { type: String, required: true },
   address: { type: String, required: true },

@@ -3,7 +3,7 @@ const Joi = require("Joi");
 //img, price, description, address
 
 // const imgRole = {
-//   img: Joi.img,
+//   img: Joi.string(),
 // };
 const priceRole = {
   price: Joi.number().min(5).max(999000000).required(),
