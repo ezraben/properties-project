@@ -2,57 +2,60 @@ const { query } = require("express");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const multer = require("multer");
-// const multerConfig = multer.c;
+// const multer = require("multer");
+
+// const upLoadMulter = multer({ dest: "uploads/" });
 const upLoadMulter = require("../../config/multer");
+// const upLoadMulter = require("../../config/multer");
 const CustomMsg = require("../../classes/CustomMsg");
 
 const Properties = require("../../models/properties.model");
 const propertiesModel = require("../../models/properties.model");
-// const {
-//   Properties,
-//   propertiesModel,
-// } = require("../../models/properties.model");
+
 const propertiesValidation = require("../../validation/property.validation");
 
 // from here multer until where i start CRUD
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads");
-  },
-  fileaddress: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldaddress + "-" + uniqueSuffix);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./uploads");
+//   },
+//   fileaddress: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//     cb(null, file.fieldaddress + "-" + uniqueSuffix);
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
-router.post("/", upload.single("propertyImg"), async (req, res) => {
-  // router.post("/properties", upload.single("propertyImg"), async (req, res) => {
-  try {
-    const validateValue = await propertiesValidation.validatePropertySchema(
-      req.body
-    );
-    if (validateValue) {
-      console.log(validateValue);
+// until here working up load also with react - not mullter
+///////////////////////////////////////////
+// router.post("/", upload.single("propertyImg"), async (req, res) => {
+//   // router.post("/properties", upload.single("propertyImg"), async (req, res) => {
+//   try {
+//     const validateValue = await propertiesValidation.validatePropertySchema(
+//       req.body
+//     );
+//     if (validateValue) {
+//       console.log(validateValue);
 
-      const newUserData = await propertiesModel.insertProperty(
-        // const newUserData = await propertiesModel.insertProperty(
-        // validateValue.img,
-        validateValue.price,
-        validateValue.description,
-        validateValue.address
-      );
-      res.json("property created successfully");
-    }
-    console.log(req.body);
-  } catch (err) {
-    console.log(err);
-    res.json(err);
-  }
-});
+//       const newUserData = await propertiesModel.insertProperty(
+//         // const newUserData = await propertiesModel.insertProperty(
+//         // validateValue.img,
+//         validateValue.price,
+//         validateValue.description,
+//         validateValue.address
+//       );
+//       res.json("property created successfully");
+//     }
+//     console.log(req.body);
+//   } catch (err) {
+//     console.log(err);
+//     res.json(err);
+//   }
+// });
+// until here working up load also with react - not mullter
+///////////////////////////////////////////
 
 //ffrom here befor changes on multer on the flight
 // const storage = multer.diskStorage({
@@ -66,8 +69,9 @@ router.post("/", upload.single("propertyImg"), async (req, res) => {
 // });
 
 // const upload = multer({ storage: storage });
-
-// router.post("/properties", upload.single("propertyImg"), async (req, res) => {
+/////////////////////////////////////////////
+//ipi tyhat works with react but no multer
+// router.post("/", upload.single("propertyImg"), async (req, res) => {
 //   try {
 //     const validateValue = await propertiesValidation.validatePropertySchema(
 //       req.body
@@ -85,8 +89,41 @@ router.post("/", upload.single("propertyImg"), async (req, res) => {
 //     console.log(req.body);
 //   } catch (err) {
 //     res.json(err);
+//     console.log(err);
 //   }
 // });
+////////////////////////////////////////////////////
+//until here ipi hat works with react but no multer
+
+router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
+  try {
+    const validateValue = await propertiesValidation.validatePropertySchema(
+      req.body
+    );
+
+    if (validateValue) {
+      const newUserData = await propertiesModel.insertProperty(
+        req.file.filename,
+        validateValue.price,
+        validateValue.description,
+        validateValue.address
+        // validateValue.img
+        // req.file.filename
+        // validateValue.propertyImg,
+        // validateValue.price,
+        // validateValue.description,
+        // validateValue.address
+        // // req.file.filename
+      );
+      console.log("req.file", req.file);
+      res.json("property created successfully");
+    }
+    console.log(req.body);
+  } catch (err) {
+    res.json(err);
+    console.log(err);
+  }
+});
 
 ///////////////////////////////////////
 // until here multer, from here CRUD

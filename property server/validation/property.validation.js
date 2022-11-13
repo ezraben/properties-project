@@ -2,9 +2,9 @@ const Joi = require("Joi");
 
 //img, price, description, address
 
-// const imgRole = {
-//   img: Joi.string(),
-// };
+const imgRole = {
+  img: Joi.string(),
+};
 const priceRole = {
   price: Joi.number().min(5).max(999000000).required(),
 };
@@ -17,7 +17,7 @@ const addressRole = {
 };
 
 const propertySchema = Joi.object({
-  // ...imgRole,
+  ...imgRole,
   ...priceRole,
   ...descriptionRole,
   ...addressRole,

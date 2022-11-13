@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 const usersModule = require("../../models/users.model");
 const userValidation = require("../../validation/user.validation");
+const upLoadMulter = require("../../config/multer");
 const bcrypt = require("../../config/bcrypt");
 const CustomMsg = require("../../classes/CustomMsg");
 const jwt = require("../../config/jwt");
 const generateRandAlphaNum = require("../../util/randomAlphaNum");
 /////////////////////
-router.post("/signup", async (req, res) => {
+router.post("/signup", upLoadMulter.single("img"), async (req, res) => {
+  console.log(req.file);
   try {
     const validatedValue = await userValidation.validateSignupSchema(req.body);
     console.log("validatedValue", validatedValue);
@@ -22,9 +24,12 @@ router.post("/signup", async (req, res) => {
       validatedValue.lastName,
       validatedValue.email,
       hashedPassword,
+      req.file.filename,
+      // req.file,
       validatedValue.phone,
       validatedValue.isAdmin
     );
+    // console.log("req.file", req.file);
     let token = await jwt.generateToken({ email: validatedValue.email });
     if (token) {
       res.json(new CustomMsg(CustomMsg.STATUSES.Success, token));
@@ -40,6 +45,47 @@ router.post("/signup", async (req, res) => {
     res.json(err);
   }
 });
+
+////////////////////////////////
+
+//from here working singup before changing for up loading pfofile pi with multer
+
+// router.post("/signup", async (req, res) => {
+//   try {
+//     const validatedValue = await userValidation.validateSignupSchema(req.body);
+//     console.log("validatedValue", validatedValue);
+//     const userData = await usersModule.selectUserByMail(validatedValue.email);
+
+//     if (userData.length > 0) {
+//       throw new CustomMsg(CustomMsg.STATUSES.Failed, "email already exist");
+//     }
+//     const hashedPassword = await bcrypt.createHash(validatedValue.password);
+//     const newUserData = await usersModule.insertUser(
+//       validatedValue.firstName,
+//       validatedValue.lastName,
+//       validatedValue.email,
+//       hashedPassword,
+//       validatedValue.phone,
+//       validatedValue.isAdmin
+//     );
+//     let token = await jwt.generateToken({ email: validatedValue.email });
+//     if (token) {
+//       res.json(new CustomMsg(CustomMsg.STATUSES.Success, token));
+//       return;
+//     }
+//     // res.json(
+//     //   new CustomMsg(CustomMsg.STATUSES.Success, "new user created")
+//     //   // new CustomResponse(CustomResponse.STATUSES.ok, "new user created")
+//     // );
+//   } catch (err) {
+//     console.log("err", err);
+
+//     res.json(err);
+//   }
+// });
+//////////////////////////////////////////////////
+//until here working singup before changing for up loading pfofile pi with multer
+
 ////////////////
 
 // router.post("/signup", async (req, res) => {
