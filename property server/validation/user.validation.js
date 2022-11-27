@@ -61,6 +61,12 @@ const loginSchema = Joi.object({
 const forgetPasswordSchema = Joi.object({
   ...emailRole,
 });
+const recoveryPasswordSchema = Joi.object({
+  ...passwordRole,
+});
+const recoveryPasswordValidateEmailSchema = Joi.object({
+  ...emailRole,
+});
 
 const validateSignupSchema = (data) => {
   return signupSchema.validateAsync(data, { abortEarly: false });
@@ -70,11 +76,21 @@ const validateLoginSchema = (data) => {
   return loginSchema.validateAsync(data, { abortEarly: false });
 };
 const validateForgetPasswordSchemaSchema = (data) => {
-  return loginSchema.validateAsync(data, { abortEarly: false });
+  return forgetPasswordSchema.validateAsync(data, { abortEarly: false });
+};
+const validateRecoveryPasswordSchema = (data) => {
+  return recoveryPasswordSchema.validateAsync(data, { abortEarly: false });
+};
+const validateRecoveryPasswordValidateEmailSchema = (data) => {
+  return recoveryPasswordValidateEmailSchema.validateAsync(data, {
+    abortEarly: false,
+  });
 };
 
 module.exports = {
   validateSignupSchema,
   validateLoginSchema,
   validateForgetPasswordSchemaSchema,
+  validateRecoveryPasswordSchema,
+  validateRecoveryPasswordValidateEmailSchema,
 };

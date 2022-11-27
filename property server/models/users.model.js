@@ -13,6 +13,10 @@ const Schema = mongoose.Schema;
   // isAdmin: { type: Boolean },
   // isAdmin: { type: String, required: true },
   isAdmin: { type: Boolean, required: true, default: false },
+  recovery: {
+    secretKey: { type: String },
+    dateRecovery: { type: Date },
+  },
 });
 
 //create conllection
@@ -42,10 +46,25 @@ const insertUser = (
   return user.save();
 };
 
+const upDateRecovery = (email, key, date) => {
+  return Users.updateOne(
+    { email },
+    { "recovery.secretKey": key, "recovery.dateRecovery": date }
+  );
+};
+const upDatePassword = (email, password) => {
+  return Users.updateOne({ email }, { password, "recovery.secretKey": "" });
+};
+
 const selectUserByMail = (email) => {
   return Users.find({ email });
 };
-module.exports = { insertUser, selectUserByMail };
+module.exports = {
+  insertUser,
+  selectUserByMail,
+  upDateRecovery,
+  upDatePassword,
+};
 
 //////////////////////////////////////////////////
 //from here before changes for adding profile piceture
@@ -91,4 +110,5 @@ module.exports = { insertUser, selectUserByMail };
 // const selectUserByMail = (email) => {
 //   return Users.find({ email });
 // };
-// module.exports = { insertUser, selectUserByMail };
+
+// module.exports = { insertUser, selectUserByMail, upDateRecovery };

@@ -12,6 +12,7 @@ const Schema = mongoose.Schema;
 //all the mulipulation on the documents will be using this object
 const Properties = mongoose.model("Properties", propertiesSchema);
 //this function will create new user
+
 const insertProperty = (img, price, description, address) => {
   const property = new Properties({
     // img:
@@ -64,6 +65,15 @@ const selectAllProperties = () => {
 const selectPropertyById = (_id) => {
   return Properties.find({ _id });
 };
+const selectPropertyByAddress = (filter) => {
+  return Properties.find({ address: { $eq: filter.address } });
+};
+const selectPropertyByMaxPrice = (filter) => {
+  return Properties.find({ price: { $lte: filter.price } });
+};
+const selectPropertyByMinPrice = (filter) => {
+  return Properties.find({ price: { $gte: filter.price } });
+};
 
 const deleteProperty = (_id) => {
   return Properties.findOneAndDelete({ _id });
@@ -75,4 +85,7 @@ module.exports = {
   selectAllProperties,
   selectPropertyById,
   deleteProperty,
+  selectPropertyByAddress,
+  selectPropertyByMaxPrice,
+  selectPropertyByMinPrice,
 };

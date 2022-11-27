@@ -1,6 +1,6 @@
 const generateRandAlphaNumString = (strSize) => {
   return [...Array(strSize)]
-    .map(() => Math.floor(Math.random() * 16).toString(16))
+    .map(() => Math.floor(Math.random() * 35).toString(35))
     .join("");
 };
 

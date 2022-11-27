@@ -113,7 +113,7 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
         // validateValue.price,
         // validateValue.description,
         // validateValue.address
-        // // req.file.filename
+        // req.file.filename
       );
       console.log("req.file", req.file);
       res.json("property created successfully");
@@ -130,6 +130,65 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const properties = await propertiesModel.selectAllProperties();
+    res.json(properties);
+  } catch (err) {
+    res.json(err);
+  }
+});
+router.post("/filter", async (req, res) => {
+  try {
+    // const filterBy = { address: req.body };
+
+    const properties = await propertiesModel.selectPropertyByAddress({
+      // searchInpt: req.body.searchInpt,
+      address: req.body.address,
+    });
+    // const properties = await propertiesModel.selectPropertyByAddress({
+    //   // searchInpt: req.body.searchInpt,
+    //   address: req.body.address,
+    // });
+    console.log(properties);
+    console.log(req.body);
+
+    res.json(properties);
+  } catch (err) {
+    res.json(err);
+  }
+});
+// router.get("/filter", async (req, res) => {
+//   try {
+//     // const filterBy = { address: req.body };
+
+//     const properties = await propertiesModel.selectPropertyByAddress({
+//       address: req.body.address,
+//     });
+
+//     res.json(properties);
+//   } catch (err) {
+//     res.json(err);
+//   }
+// });
+router.post("/filterByPrice", async (req, res) => {
+  try {
+    // const filterBy = { address: req.body };
+
+    const properties = await propertiesModel.selectPropertyByMaxPrice({
+      price: req.body.price,
+    });
+
+    res.json(properties);
+  } catch (err) {
+    res.json(err);
+  }
+});
+router.post("/filterByMinPrice", async (req, res) => {
+  try {
+    // const filterBy = { address: req.body };
+
+    const properties = await propertiesModel.selectPropertyByMinPrice({
+      price: req.body.price,
+    });
+
     res.json(properties);
   } catch (err) {
     res.json(err);
