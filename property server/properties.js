@@ -197,52 +197,75 @@ router.post("/filterByMinPrice", async (req, res) => {
 
 ///////////////////////////////////////////
 
-// router.patch("/:id", async (req, res) => {
-//   try {
-//     const id = req.query._id;
-//     const validateValue = await propertiesValidation.validatePropertySchema(
-//       req.body
-//     );
-
-//     if (validateValue) {
-//       const newUserData = await propertiesModel.findByIdAndUpdate(id, {
-//         price: validateValue.price,
-//         description: validateValue.description,
-//         address: validateValue.address,
-//         // validateValue.img,
-//       });
-//       res.json("property upDated  successfully");
-//     }
-//     console.log(req.body);
-//   } catch (err) {
-//     res.json(err);
-//   }
-// });
-/////////////////////////////////////////////////////////////
-//down from here works with postman aftel lady dlaat fix
-router.put("/:id", async (req, res) => {
+router.put("/:id/:price/:description/:address", async (req, res) => {
+  //   // router.put("/:id/:price/:description/:address", async (req, res) => {
   try {
-    const id = req.query._id;
+    const id = req.params.id;
+    const data = {
+      price: req.params.price,
+      description: req.params.description,
+      address: req.params.address,
+    };
+
     const validateValue = await propertiesValidation.validatePropertySchema(
-      req.body
+      // req.body
+      data
     );
 
-    // console.log(validateValue);
     if (validateValue) {
       const newUserData = await propertiesModel.findByIdAndUpdate(
         id,
-
         validateValue.price,
         validateValue.description,
         validateValue.address
         // validateValue.img,
       );
+
       res.json("property upDated  successfully");
     }
   } catch (err) {
+    console.log(err);
     res.json(err);
   }
 });
+/////////////////////////////////////////////////////////////
+//down from here works with postman aftel lady dlaat fix
+// router.put("/:id", async (req, res) => {
+//   // router.put("/:id/:price/:description/:address", async (req, res) => {
+//   try {
+//     //console.log(req.body); from postman the diteails pass
+//     const id = req.query._id;
+//     console.log("id", id);
+
+//     const validateValue = await propertiesValidation.validatePropertySchema(
+//       req.body
+//     );
+
+//     if (validateValue) {
+//       console.log(" console.log(validateValue);", validateValue);
+
+//       const newUserData = await propertiesModel.findByIdAndUpdate(
+//         id,
+
+//         validateValue.price,
+//         validateValue.description,
+//         validateValue.address
+//         // validateValue.img,
+//       );
+//       console.log(
+//         "validateValue.price,validateValue.description,validateValue.address",
+//         validateValue.price,
+//         validateValue.description,
+//         validateValue.address
+//       );
+
+//       res.json("property upDated  successfully");
+//     }
+//   } catch (err) {
+//     console.log("err", err);
+//     res.json(err);
+//   }
+// });
 /////////////////////////////////////////////////////////////
 //until from here works with postman aftel lady dlaat fix
 
@@ -266,22 +289,5 @@ router.delete("/:id", async (req, res) => {
     console.log(err);
   }
 });
-// router.delete("/:id", async (req, res) => {
-//   const _id = req.query;
-//   console.log("req1", req.query);
-//   try {
-//     console.log("_id", _id);
-
-//     const property = await propertiesModel.deleteProperty(_id._id);
-
-//     res.json(property);
-
-//     if (property) {
-//     }
-//   } catch (err) {
-//     res.json(err);
-//     console.log(err);
-//   }
-// });
 
 module.exports = router;

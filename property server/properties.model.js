@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 /* create user schema */ const propertiesSchema = new Schema({
   // img: { type: Image, required: false },
   // img: { type: String },
+
   price: { type: Number, required: true },
   description: { type: String, required: true },
   address: { type: String, required: true },
@@ -84,6 +85,19 @@ const deleteProperty = (_id) => {
 //     data,
 //   });
 // };
+///////////////////////////
+// from  here  before lady dlaat changes  --  was working almost
+// const findByIdAndUpdate = (_id, price, description, address) => {
+//   // data = { price: price, description: description, address: address };
+
+//   return Properties.findByIdAndUpdate(_id, {
+//     price: price,
+//     description: description,
+//     address: address,
+//   });
+// };
+///////////////////////////
+// until here  before lady dlaat changes --  was working almost
 //////////////////////////////////////
 // dwon from here works on postman
 const findByIdAndUpdate = (_id, price, description, address) => {
