@@ -103,7 +103,7 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
 
     if (validateValue) {
       const newUserData = await propertiesModel.insertProperty(
-        req.file.filename,
+        // req.file.filename,
         validateValue.price,
         validateValue.description,
         validateValue.address
@@ -195,37 +195,50 @@ router.post("/filterByMinPrice", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
-  try {
-    const id = req.query._id;
-    const validateValue = await propertiesValidation.validatePropertySchema(
-      req.body
-    );
-    if (validateValue) {
-      const newUserData = await Properties.findByIdAndUpdate(
-        id,
+///////////////////////////////////////////
 
-        {
-          price: validateValue.price,
-          description: validateValue.description,
-          address: validateValue.address,
-          img: validateValue.img,
-        }
+router.put("/:id/:price/:description/:address", async (req, res) => {
+  //   // router.put("/:id/:price/:description/:address", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const data = {
+      price: req.params.price,
+      description: req.params.description,
+      address: req.params.address,
+    };
+
+    const validateValue = await propertiesValidation.validatePropertySchema(
+      // req.body
+      data
+    );
+
+    if (validateValue) {
+      const newUserData = await propertiesModel.findByIdAndUpdate(
+        id,
+        validateValue.price,
+        validateValue.description,
+        validateValue.address
+        // validateValue.img,
       );
+
       res.json("property upDated  successfully");
     }
-    console.log(req.body);
   } catch (err) {
+    console.log(err);
     res.json(err);
   }
 });
 
 router.delete("/:id", async (req, res) => {
-  const _id = req.query;
+  const _id = req.params.id;
   console.log("req1", req.query);
   try {
     console.log("_id", _id);
-    const property = await propertiesModel.deleteProperty(_id._id);
+
+    // http://localhost:3001/api/properties/:id?_id=636b7fee0673e9925182ac0b
+    //this structure in postman deleted
+
+    const property = await propertiesModel.deleteProperty(_id);
 
     res.json(property);
 
@@ -236,5 +249,62 @@ router.delete("/:id", async (req, res) => {
     console.log(err);
   }
 });
+// const likedPropertiesArr = [];
+// cardsRouter.get("/:id", auth, async (req, res) => {
+//   const card = await Card.findOne({
+//     _id: req.params.id,
+//     user_id: req.user._id,
+//   });
+//   if (!card) return res.status(404).json({ messgae: "dont found a card" });
+//   res.send(card);
+// });
+router.get("/likedProperties/:id", async (req, res) => {
+  try {
+    // http://localhost:3001/api/properties/:id?_id=636b7fee0673e9925182ac0b
+    //this structure in postman deleted
+    // console.log(req.params.id);
+
+    const id = req.params.id;
+    console.log("id", id);
+
+    const property = await propertiesModel.selectPropertyById({
+      _id: req.params.id,
+    });
+    res.json(property);
+    console.log(property);
+
+    if (!property) {
+      res.json({ msg: "cant find card" });
+    }
+  } catch (err) {
+    res.json(err);
+    console.log(err);
+  }
+});
+
+//////////////////////////////
+//dwon from here delet in react not data base
+// router.delete("/:id", async (req, res) => {
+//   const _id = req.query;
+//   console.log("req1", req.query);
+//   try {
+//     console.log("_id", _id);
+
+//     // http://localhost:3001/api/properties/:id?_id=636b7fee0673e9925182ac0b
+//     //this structure in postman deleted
+
+//     const property = await propertiesModel.deleteProperty(_id._id);
+
+//     res.json(property);
+
+//     if (property) {
+//     }
+//   } catch (err) {
+//     res.json(err);
+//     console.log(err);
+//   }
+// });
+//////////////////////////////
+//until here delet in react not data base
 
 module.exports = router;
