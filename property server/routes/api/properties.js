@@ -11,6 +11,7 @@ const CustomMsg = require("../../classes/CustomMsg");
 
 const Properties = require("../../models/properties.model");
 const propertiesModel = require("../../models/properties.model");
+const usersModel = require("../../models/users.model");
 
 const propertiesValidation = require("../../validation/property.validation");
 
@@ -137,16 +138,10 @@ router.get("/", async (req, res) => {
 });
 router.post("/filter", async (req, res) => {
   try {
-    // const filterBy = { address: req.body };
-
     const properties = await propertiesModel.selectPropertyByAddress({
-      // searchInpt: req.body.searchInpt,
       address: req.body.address,
     });
-    // const properties = await propertiesModel.selectPropertyByAddress({
-    //   // searchInpt: req.body.searchInpt,
-    //   address: req.body.address,
-    // });
+
     console.log(properties);
     console.log(req.body);
 
@@ -155,19 +150,7 @@ router.post("/filter", async (req, res) => {
     res.json(err);
   }
 });
-// router.get("/filter", async (req, res) => {
-//   try {
-//     // const filterBy = { address: req.body };
 
-//     const properties = await propertiesModel.selectPropertyByAddress({
-//       address: req.body.address,
-//     });
-
-//     res.json(properties);
-//   } catch (err) {
-//     res.json(err);
-//   }
-// });
 router.post("/filterByPrice", async (req, res) => {
   try {
     // const filterBy = { address: req.body };
@@ -235,9 +218,6 @@ router.delete("/:id", async (req, res) => {
   try {
     console.log("_id", _id);
 
-    // http://localhost:3001/api/properties/:id?_id=636b7fee0673e9925182ac0b
-    //this structure in postman deleted
-
     const property = await propertiesModel.deleteProperty(_id);
 
     res.json(property);
@@ -249,21 +229,9 @@ router.delete("/:id", async (req, res) => {
     console.log(err);
   }
 });
-// const likedPropertiesArr = [];
-// cardsRouter.get("/:id", auth, async (req, res) => {
-//   const card = await Card.findOne({
-//     _id: req.params.id,
-//     user_id: req.user._id,
-//   });
-//   if (!card) return res.status(404).json({ messgae: "dont found a card" });
-//   res.send(card);
-// });
+
 router.get("/likedProperties/:id", async (req, res) => {
   try {
-    // http://localhost:3001/api/properties/:id?_id=636b7fee0673e9925182ac0b
-    //this structure in postman deleted
-    // console.log(req.params.id);
-
     const id = req.params.id;
     console.log("id", id);
 
@@ -272,6 +240,13 @@ router.get("/likedProperties/:id", async (req, res) => {
     });
     res.json(property);
     console.log(property);
+    ////////////////////////
+    //from here adding property to data base affter we got the id
+    if (property != 0) {
+      console.log("euston we got a property");
+    }
+    ////////////////////////
+    //until here adding property to data base affter we got the id
 
     if (!property) {
       res.json({ msg: "cant find card" });
@@ -282,29 +257,84 @@ router.get("/likedProperties/:id", async (req, res) => {
   }
 });
 
-//////////////////////////////
-//dwon from here delet in react not data base
-// router.delete("/:id", async (req, res) => {
-//   const _id = req.query;
-//   console.log("req1", req.query);
+/////////////////////////////////////////////
+//rout works, not yet with react
+router.post(`/addLikedPropertyId`, async (req, res) => {
+  try {
+    console.log("routes works");
+    const id = req.query.id;
+    const email = req.query.email;
+    console.log("req.query", req.query);
+
+    const usersModell = await usersModel.addLickedProperty(id, email);
+
+    // res.json({ id, email });
+    res.json({ usersModell });
+  } catch (err) {
+    res.json(err);
+    console.log(err);
+  }
+});
+router.get("/lickedPropertiesByUser", async (req, res) => {
+  try {
+    const user = await usersModel.selectUserByMail(req.query.email);
+    console.log("req.query.email", req.query.email);
+    // res.json(user);
+    const properties = user[0].likedProperties;
+    console.log(user[0].likedProperties);
+    res.json(properties);
+  } catch (err) {
+    console.log(err);
+    res.json(err);
+  }
+});
+router.get("/getLickedPropertiesById", async (req, res) => {
+  try {
+    console.log("this is working");
+    console.log("req.query", req.query);
+    const propertyById = await propertiesModel.selectPropertyById(req.query.id);
+    res.json(propertyById);
+    console.log("propertyById", propertyById);
+  } catch (err) {
+    res.json(err);
+    console.log(err);
+  }
+});
+////////////////////////////////
+//works on postman
+// router.get("/lickedPropertiesByUser", async (req, res) => {
 //   try {
-//     console.log("_id", _id);
+//     const user = await usersModel.selectUserByMail(req.body.email);
+//     // res.json(user);
+//     const properties = user;
+//     console.log(user[0].likedProperties);
+//     res.json(properties);
+//   } catch (err) {
+//     console.log(err);
+//     res.json(err);
+//   }
+// });
+////////////////////////////////
+//works on postman
+// router.post("/addLikedPropertyId", async (req, res) => {
+//   try {
+//     console.log("routes works");
+//     const id = req.body.id;
+//     const email = req.body.email;
+//     console.log("req.body", req.body);
+//     console.log("res", res.body);
 
-//     // http://localhost:3001/api/properties/:id?_id=636b7fee0673e9925182ac0b
-//     //this structure in postman deleted
+//     const usersModell = await usersModel.addLickedProperty(id, email);
+//     // const usersModelllll = await usersModel.addLickedProperty(id, email);
 
-//     const property = await propertiesModel.deleteProperty(_id._id);
-
-//     res.json(property);
-
-//     if (property) {
-//     }
+//     // res.json({ msg: "route" });
+//     res.json({ id, email });
 //   } catch (err) {
 //     res.json(err);
 //     console.log(err);
 //   }
 // });
-//////////////////////////////
-//until here delet in react not data base
+/////////////////////////////////////////////
+//rout works, not yet with react
 
 module.exports = router;

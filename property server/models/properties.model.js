@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const usersModel = require("../models/users.model");
 const Schema = mongoose.Schema;
 /* create user schema */ const propertiesSchema = new Schema({
   // img: { type: Image, required: false },

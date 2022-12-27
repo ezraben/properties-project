@@ -14,7 +14,7 @@ const Schema = mongoose.Schema;
   // isAdmin: { type: Boolean },
   // isAdmin: { type: String, required: true },
   isAdmin: { type: Boolean, required: true, default: false },
-  // likedProperties: { type: Array },
+  likedProperties: { type: Array },
   recovery: {
     secretKey: { type: String },
     dateRecovery: { type: Date },
@@ -33,7 +33,8 @@ const insertUser = (
   // confirmPassword,
   img,
   phone,
-  isAdmin
+  isAdmin,
+  likedProperties
 ) => {
   const user = new Users({
     firstName,
@@ -44,6 +45,7 @@ const insertUser = (
     img,
     phone,
     isAdmin,
+    likedProperties,
   });
   return user.save();
 };
@@ -61,11 +63,21 @@ const upDatePassword = (email, password) => {
 const selectUserByMail = (email) => {
   return Users.find({ email });
 };
+
+const addLickedProperty = (id, email) => {
+  console.log("this is id", id);
+  console.log("email", email);
+
+  return Users.updateOne({ email: email }, { $push: { likedProperties: id } });
+  // return Users.updateOne ({email:email},{$push:{likedProperties}})
+};
+
 module.exports = {
   insertUser,
   selectUserByMail,
   upDateRecovery,
   upDatePassword,
+  addLickedProperty,
 };
 
 //////////////////////////////////////////////////
