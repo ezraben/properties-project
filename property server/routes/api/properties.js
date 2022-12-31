@@ -292,7 +292,9 @@ router.get("/getLickedPropertiesById", async (req, res) => {
   try {
     console.log("this is working");
     console.log("req.query", req.query);
-    const propertyById = await propertiesModel.selectPropertyById(req.query.id);
+    console.log("req.params", req.params);
+    const propertyById = await propertiesModel.selectPropertyById(req.query);
+    // const propertyById = await propertiesModel.selectPropertyById(req.query.id);
     res.json(propertyById);
     console.log("propertyById", propertyById);
   } catch (err) {
@@ -300,13 +302,12 @@ router.get("/getLickedPropertiesById", async (req, res) => {
     console.log(err);
   }
 });
-////////////////////////////////
-//works on postman
 // router.get("/lickedPropertiesByUser", async (req, res) => {
 //   try {
-//     const user = await usersModel.selectUserByMail(req.body.email);
+//     const user = await usersModel.selectUserByMail(req.query.email);
+//     console.log("req.query.email", req.query.email);
 //     // res.json(user);
-//     const properties = user;
+//     const properties = user[0].likedProperties;
 //     console.log(user[0].likedProperties);
 //     res.json(properties);
 //   } catch (err) {
@@ -314,27 +315,17 @@ router.get("/getLickedPropertiesById", async (req, res) => {
 //     res.json(err);
 //   }
 // });
-////////////////////////////////
-//works on postman
-// router.post("/addLikedPropertyId", async (req, res) => {
+// router.get("/getLickedPropertiesById", async (req, res) => {
 //   try {
-//     console.log("routes works");
-//     const id = req.body.id;
-//     const email = req.body.email;
-//     console.log("req.body", req.body);
-//     console.log("res", res.body);
-
-//     const usersModell = await usersModel.addLickedProperty(id, email);
-//     // const usersModelllll = await usersModel.addLickedProperty(id, email);
-
-//     // res.json({ msg: "route" });
-//     res.json({ id, email });
+//     console.log("this is working");
+//     console.log("req.query", req.query);
+//     const propertyById = await propertiesModel.selectPropertyById(req.query.id);
+//     res.json(propertyById);
+//     console.log("propertyById", propertyById);
 //   } catch (err) {
 //     res.json(err);
 //     console.log(err);
 //   }
 // });
-/////////////////////////////////////////////
-//rout works, not yet with react
 
 module.exports = router;

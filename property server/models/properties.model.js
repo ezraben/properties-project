@@ -80,8 +80,12 @@ const selectPropertyByMaxPrice = (filter) => {
 const selectPropertyByMinPrice = (filter) => {
   return Properties.find({ price: { $gte: filter.price } });
 };
+// const selectPropertyById = (_id, id) => {
+//   return Properties.find({ _id: { $in: [id] } });
+// };
+
 const selectPropertyById = (_id) => {
-  return Properties.find({ _id });
+  return Properties.find(_id);
 };
 // const selectPropertyById = (_id) => {
 //   return Properties.find({ _id });
