@@ -71,6 +71,13 @@ const addLickedProperty = (id, email) => {
   return Users.updateOne({ email: email }, { $push: { likedProperties: id } });
   // return Users.updateOne ({email:email},{$push:{likedProperties}})
 };
+const removeLickedProperty = (id, email) => {
+  console.log("this is id", id);
+  console.log("email", email);
+  return Users.updateOne({ email: email }, { $pull: { likedProperties: id } });
+
+  // return Users.updateOne({ email: email }, { $push: { likedProperties: id } });
+};
 
 module.exports = {
   insertUser,
@@ -78,6 +85,7 @@ module.exports = {
   upDateRecovery,
   upDatePassword,
   addLickedProperty,
+  removeLickedProperty,
 };
 
 //////////////////////////////////////////////////

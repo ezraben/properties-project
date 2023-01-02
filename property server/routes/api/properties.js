@@ -278,37 +278,72 @@ router.post(`/addLikedPropertyId`, async (req, res) => {
 router.get("/lickedPropertiesByUser", async (req, res) => {
   try {
     const user = await usersModel.selectUserByMail(req.query.email);
+
     console.log("req.query.email", req.query.email);
     // res.json(user);
     const properties = user[0].likedProperties;
-    console.log(user[0].likedProperties);
-    res.json(properties);
-  } catch (err) {
-    console.log(err);
-    res.json(err);
-  }
-});
-router.get("/getLickedPropertiesById", async (req, res) => {
-  try {
+    console.log("user[0].likedProperties", user[0].likedProperties);
+
+    // res.json(properties);
+    // }
+    // catch (err) {
+    //   console.log(err);
+    //   res.json(err);
+    // }
+    // });
+    // router.get("/getLickedPropertiesById", async (req, res) => {
+    // try {
     console.log("this is working");
     console.log("req.query", req.query);
-    console.log("req.params", req.params);
-    const propertyById = await propertiesModel.selectPropertyById(req.query);
+    ///////////////////////////////
+
+    const propertyById = await propertiesModel.selectPropertyById(properties);
     // const propertyById = await propertiesModel.selectPropertyById(req.query.id);
     res.json(propertyById);
     console.log("propertyById", propertyById);
   } catch (err) {
     res.json(err);
+    console.log("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err);
+  }
+});
+
+router.put("/removeFavoriteProp/:id", async (req, res) => {
+  const _id = req.query.id;
+  const email = req.query.email;
+  console.log("req1", req.query);
+  try {
+    console.log("_id pased drom react", _id);
+    console.log("email pased from react", email);
+
+    const property = await usersModel.removeLickedProperty(_id, email);
+
+    if (!property) {
+      res.json("cant find the card");
+    }
+
+    // res.json(property);
+    res.json(property);
+    console.log(property);
+
+    // if (property) {
+    // }
+  } catch (err) {
+    res.json(err);
     console.log(err);
   }
 });
+
+/////////////////////////////////////////////////////////////
+/////////////
+//down from here the 2 api that kind of work with react but not getting the cards at lodad, and need some time more them one function to get all cards
 // router.get("/lickedPropertiesByUser", async (req, res) => {
 //   try {
 //     const user = await usersModel.selectUserByMail(req.query.email);
 //     console.log("req.query.email", req.query.email);
 //     // res.json(user);
 //     const properties = user[0].likedProperties;
-//     console.log(user[0].likedProperties);
+//     console.log("user[0].likedProperties", user[0].likedProperties);
+
 //     res.json(properties);
 //   } catch (err) {
 //     console.log(err);
@@ -319,13 +354,23 @@ router.get("/getLickedPropertiesById", async (req, res) => {
 //   try {
 //     console.log("this is working");
 //     console.log("req.query", req.query);
+//     ///////////////////////////////
+//     //dlaat work
+//     // const propertyById = await propertiesModel.selectByIds(req.query.id);
+//     ///////////////////////////////
+//     //dlaat work
+
+//     //console.log(cards);
 //     const propertyById = await propertiesModel.selectPropertyById(req.query.id);
 //     res.json(propertyById);
 //     console.log("propertyById", propertyById);
 //   } catch (err) {
 //     res.json(err);
-//     console.log(err);
+//     console.log("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err);
 //   }
 // });
+/////////////////////////////////////////////////////////////
+/////////////
+//until here the 2 api that kind of work with react but not getting the cards at lodad, and need some time more them one function to get all cards
 
 module.exports = router;

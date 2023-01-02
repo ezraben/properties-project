@@ -84,12 +84,31 @@ const selectPropertyByMinPrice = (filter) => {
 //   return Properties.find({ _id: { $in: [id] } });
 // };
 
-const selectPropertyById = (_id) => {
-  return Properties.find(_id);
-};
-// const selectPropertyById = (_id) => {
-//   return Properties.find({ _id });
+// const selectPropertyById = (id) => {
+//   return Properties.findById(id);
 // };
+//////////////////////////
+//dlaat work
+
+//  const  selectByIds =  (ids) => {
+//   if (Array.isArray(ids)) {
+//     cards = [];
+//     ids.forEach((element) => {
+//       cards.push(selectPropertyById(element));
+//       console.log(cards[0]);
+//     });
+
+//     return cards;
+//   } else {
+//     return selectPropertyById(ids);
+//   }
+// };
+//////////////////////////
+//dlaat work
+
+const selectPropertyById = (_id) => {
+  return Properties.find({ _id });
+};
 
 const deleteProperty = (_id) => {
   return Properties.findOneAndDelete({ _id });
@@ -134,5 +153,6 @@ module.exports = {
   selectPropertyByAddress,
   selectPropertyByMaxPrice,
   selectPropertyByMinPrice,
+  // selectByIds,
   findByIdAndUpdate,
 };
