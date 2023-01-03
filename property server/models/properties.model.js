@@ -8,6 +8,7 @@ const Schema = mongoose.Schema;
   price: { type: Number, required: true },
   description: { type: String, required: true },
   address: { type: String, required: true },
+  userEmail: { type: String, required: true },
 });
 
 //create conllection
@@ -15,7 +16,7 @@ const Schema = mongoose.Schema;
 const Properties = mongoose.model("Properties", propertiesSchema);
 //this function will create new user
 
-const insertProperty = (price, description, address) => {
+const insertProperty = (price, description, address, userEmail) => {
   const property = new Properties({
     // img:
     //   req.body.img ??
@@ -25,6 +26,7 @@ const insertProperty = (price, description, address) => {
     price,
     description,
     address,
+    userEmail,
   });
 
   return property.save();
@@ -64,13 +66,10 @@ const selectAllProperties = () => {
   return Properties.find();
 };
 
-/////////////////
-//from here old find ny id
-// const selectPropertyById = (_id) => {
-//   return Properties.find({ _id });
-// };
-/////////////////
-//intil here old find ny id
+const selectPropertyByUser = (filter) => {
+  console.log("filter", filter);
+  return Properties.find({ userEmail: { $eq: filter.userEmail } });
+};
 const selectPropertyByAddress = (filter) => {
   return Properties.find({ address: { $eq: filter.address } });
 };
@@ -80,31 +79,6 @@ const selectPropertyByMaxPrice = (filter) => {
 const selectPropertyByMinPrice = (filter) => {
   return Properties.find({ price: { $gte: filter.price } });
 };
-// const selectPropertyById = (_id, id) => {
-//   return Properties.find({ _id: { $in: [id] } });
-// };
-
-// const selectPropertyById = (id) => {
-//   return Properties.findById(id);
-// };
-//////////////////////////
-//dlaat work
-
-//  const  selectByIds =  (ids) => {
-//   if (Array.isArray(ids)) {
-//     cards = [];
-//     ids.forEach((element) => {
-//       cards.push(selectPropertyById(element));
-//       console.log(cards[0]);
-//     });
-
-//     return cards;
-//   } else {
-//     return selectPropertyById(ids);
-//   }
-// };
-//////////////////////////
-//dlaat work
 
 const selectPropertyById = (_id) => {
   return Properties.find({ _id });
@@ -113,27 +87,7 @@ const selectPropertyById = (_id) => {
 const deleteProperty = (_id) => {
   return Properties.findOneAndDelete({ _id });
 };
-// const findByIdAndUpdate = (_id) => {
-//   const data = { price: price, description: description, address: address };
-//   return Properties.findByIdAndUpdate(_id, {
-//     data,
-//   });
-// };
-///////////////////////////
-// from  here  before lady dlaat changes  --  was working almost
-// const findByIdAndUpdate = (_id, price, description, address) => {
-//   // data = { price: price, description: description, address: address };
 
-//   return Properties.findByIdAndUpdate(_id, {
-//     price: price,
-//     description: description,
-//     address: address,
-//   });
-// };
-///////////////////////////
-// until here  before lady dlaat changes --  was working almost
-//////////////////////////////////////
-// dwon from here works on postman
 const findByIdAndUpdate = (_id, price, description, address) => {
   return Properties.findByIdAndUpdate(_id, {
     price: price,
@@ -141,8 +95,6 @@ const findByIdAndUpdate = (_id, price, description, address) => {
     address: address,
   });
 };
-//////////////////////////////////////////
-// until from here works on postman
 
 module.exports = {
   Properties,
@@ -153,6 +105,7 @@ module.exports = {
   selectPropertyByAddress,
   selectPropertyByMaxPrice,
   selectPropertyByMinPrice,
+  selectPropertyByUser,
   // selectByIds,
   findByIdAndUpdate,
 };

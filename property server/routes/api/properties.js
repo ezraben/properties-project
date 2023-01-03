@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 // const upLoadMulter = multer({ dest: "uploads/" });
 const upLoadMulter = require("../../config/multer");
 // const upLoadMulter = require("../../config/multer");
-const CustomMsg = require("../../classes/CustomMsg");
+// const CustomMsg = require("../../classes/CustomMsg");
 
 const Properties = require("../../models/properties.model");
 const propertiesModel = require("../../models/properties.model");
@@ -98,6 +98,8 @@ const propertiesValidation = require("../../validation/property.validation");
 
 router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
   try {
+    const userEmail = req.query.userEmail;
+
     const validateValue = await propertiesValidation.validatePropertySchema(
       req.body
     );
@@ -107,7 +109,9 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
         // req.file.filename,
         validateValue.price,
         validateValue.description,
-        validateValue.address
+        validateValue.address,
+        userEmail
+
         // validateValue.img
         // req.file.filename
         // validateValue.propertyImg,
@@ -130,12 +134,28 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
 // until here multer, from here CRUD
 router.get("/", async (req, res) => {
   try {
+    console.log("req.query", req.query);
+    const properties = await propertiesModel.selectPropertyByUser({
+      userEmail: req.query.userEmail,
+    });
+
+    res.json(properties);
+  } catch (err) {
+    res.json(err);
+  }
+});
+//////////////////
+// get all  cards !!works
+router.get("/allCards", async (req, res) => {
+  try {
     const properties = await propertiesModel.selectAllProperties();
     res.json(properties);
   } catch (err) {
     res.json(err);
   }
 });
+//////////////////
+// get all  cards !!works
 router.post("/filter", async (req, res) => {
   try {
     const properties = await propertiesModel.selectPropertyByAddress({

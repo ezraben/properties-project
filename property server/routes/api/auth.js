@@ -193,8 +193,23 @@ router.post("/login", async (req, res) => {
       );
     } else {
       let token = await jwt.generateToken({ email: userData[0].email });
-      res.json(new CustomMsg(CustomMsg.STATUSES.Success, token));
+      const isAdmin = userData[0].isAdmin;
+
+      res.json(new CustomMsg(CustomMsg.STATUSES.Success, token, isAdmin));
     }
+
+    ///////////////////
+    ////////////////
+    //befro addind is admin
+    //  else {
+    //   let token = await jwt.generateToken({ email: userData[0].email });
+    //   const isAdmin = userData[0].isAdmin;
+
+    //   res.json(new CustomMsg(CustomMsg.STATUSES.Success, token));
+    // }
+    ///////////////////
+    ////////////////
+    //befro addind is admin
   } catch (err) {
     res.json(err);
     console.log(err);

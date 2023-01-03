@@ -63,6 +63,7 @@ const upDatePassword = (email, password) => {
 const selectUserByMail = (email) => {
   return Users.find({ email });
 };
+// const checkIfAdmin = (email)=>{}
 
 const addLickedProperty = (id, email) => {
   console.log("this is id", id);
