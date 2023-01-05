@@ -7,10 +7,11 @@ const mongoose = require("mongoose");
 // const upLoadMulter = multer({ dest: "uploads/" });
 const upLoadMulter = require("../../config/multer");
 // const upLoadMulter = require("../../config/multer");
-const CustomMsg = require("../../classes/CustomMsg");
+// const CustomMsg = require("../../classes/CustomMsg");
 
 const Properties = require("../../models/properties.model");
 const propertiesModel = require("../../models/properties.model");
+const usersModel = require("../../models/users.model");
 
 const propertiesValidation = require("../../validation/property.validation");
 
@@ -95,8 +96,18 @@ const propertiesValidation = require("../../validation/property.validation");
 ////////////////////////////////////////////////////
 //until here ipi hat works with react but no multer
 
-router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
+////////////////////////////////////?
+//from here trying to add url for property img - taking off multer
+router.post("/", async (req, res) => {
   try {
+    const userEmail = req.query.userEmail;
+    console.log(userEmail);
+    if (!req.body.img) {
+      req.body.img =
+        // req.body.img ??
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+    }
+
     const validateValue = await propertiesValidation.validatePropertySchema(
       req.body
     );
@@ -106,7 +117,10 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
         // req.file.filename,
         validateValue.price,
         validateValue.description,
-        validateValue.address
+        validateValue.address,
+        validateValue.img,
+        userEmail
+
         // validateValue.img
         // req.file.filename
         // validateValue.propertyImg,
@@ -124,10 +138,60 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
     console.log(err);
   }
 });
+////////////////////////////////////?
+//until here trying to add url for property img - taking off multer
+//////////////////////////////!
+// router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
+//   try {
+//     const userEmail = req.query.userEmail;
+
+//     const validateValue = await propertiesValidation.validatePropertySchema(
+//       req.body
+//     );
+
+//     if (validateValue) {
+//       const newUserData = await propertiesModel.insertProperty(
+//         // req.file.filename,
+//         validateValue.price,
+//         validateValue.description,
+//         validateValue.address,
+//         userEmail
+
+//         // validateValue.img
+//         // req.file.filename
+//         // validateValue.propertyImg,
+//         // validateValue.price,
+//         // validateValue.description,
+//         // validateValue.address
+//         // req.file.filename
+//       );
+//       console.log("req.file", req.file);
+//       res.json("property created successfully");
+//     }
+//     console.log(req.body);
+//   } catch (err) {
+//     res.json(err);
+//     console.log(err);
+//   }
+// });
 
 ///////////////////////////////////////
 // until here multer, from here CRUD
 router.get("/", async (req, res) => {
+  try {
+    console.log("req.query", req.query);
+    const properties = await propertiesModel.selectPropertyByUser({
+      userEmail: req.query.userEmail,
+    });
+
+    res.json(properties);
+  } catch (err) {
+    res.json(err);
+  }
+});
+//////////////////
+// get all  cards !!works
+router.get("/allCards", async (req, res) => {
   try {
     const properties = await propertiesModel.selectAllProperties();
     res.json(properties);
@@ -135,18 +199,14 @@ router.get("/", async (req, res) => {
     res.json(err);
   }
 });
+//////////////////
+// get all  cards !!works
 router.post("/filter", async (req, res) => {
   try {
-    // const filterBy = { address: req.body };
-
     const properties = await propertiesModel.selectPropertyByAddress({
-      // searchInpt: req.body.searchInpt,
       address: req.body.address,
     });
-    // const properties = await propertiesModel.selectPropertyByAddress({
-    //   // searchInpt: req.body.searchInpt,
-    //   address: req.body.address,
-    // });
+
     console.log(properties);
     console.log(req.body);
 
@@ -155,19 +215,7 @@ router.post("/filter", async (req, res) => {
     res.json(err);
   }
 });
-// router.get("/filter", async (req, res) => {
-//   try {
-//     // const filterBy = { address: req.body };
 
-//     const properties = await propertiesModel.selectPropertyByAddress({
-//       address: req.body.address,
-//     });
-
-//     res.json(properties);
-//   } catch (err) {
-//     res.json(err);
-//   }
-// });
 router.post("/filterByPrice", async (req, res) => {
   try {
     // const filterBy = { address: req.body };
@@ -228,62 +276,122 @@ router.put("/:id/:price/:description/:address", async (req, res) => {
     res.json(err);
   }
 });
-/////////////////////////////////////////////////////////////
-//down from here works with postman aftel lady dlaat fix
-// router.put("/:id", async (req, res) => {
-//   // router.put("/:id/:price/:description/:address", async (req, res) => {
-//   try {
-//     //console.log(req.body); from postman the diteails pass
-//     const id = req.query._id;
-//     console.log("id", id);
-
-//     const validateValue = await propertiesValidation.validatePropertySchema(
-//       req.body
-//     );
-
-//     if (validateValue) {
-//       console.log(" console.log(validateValue);", validateValue);
-
-//       const newUserData = await propertiesModel.findByIdAndUpdate(
-//         id,
-
-//         validateValue.price,
-//         validateValue.description,
-//         validateValue.address
-//         // validateValue.img,
-//       );
-//       console.log(
-//         "validateValue.price,validateValue.description,validateValue.address",
-//         validateValue.price,
-//         validateValue.description,
-//         validateValue.address
-//       );
-
-//       res.json("property upDated  successfully");
-//     }
-//   } catch (err) {
-//     console.log("err", err);
-//     res.json(err);
-//   }
-// });
-/////////////////////////////////////////////////////////////
-//until from here works with postman aftel lady dlaat fix
 
 router.delete("/:id", async (req, res) => {
-  const _id = req.query;
+  const _id = req.params.id;
   console.log("req1", req.query);
   try {
     console.log("_id", _id);
 
-    // http://localhost:3001/api/properties/:id?_id=636b7fee0673e9925182ac0b
-    //this structure in postman deleted
-
-    const property = await propertiesModel.deleteProperty(_id._id);
+    const property = await propertiesModel.deleteProperty(_id);
 
     res.json(property);
 
     if (property) {
     }
+  } catch (err) {
+    res.json(err);
+    console.log(err);
+  }
+});
+
+router.get("/likedProperties/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log("id", id);
+
+    const property = await propertiesModel.selectPropertyById({
+      _id: req.params.id,
+    });
+    res.json(property);
+    console.log(property);
+    ////////////////////////
+    //from here adding property to data base affter we got the id
+    if (property != 0) {
+      console.log("euston we got a property");
+    }
+    ////////////////////////
+    //until here adding property to data base affter we got the id
+
+    if (!property) {
+      res.json({ msg: "cant find card" });
+    }
+  } catch (err) {
+    res.json(err);
+    console.log(err);
+  }
+});
+
+/////////////////////////////////////////////
+//rout works, not yet with react
+router.post(`/addLikedPropertyId`, async (req, res) => {
+  try {
+    console.log("routes works");
+    const id = req.query.id;
+    const email = req.query.email;
+    console.log("req.query", req.query);
+
+    const usersModell = await usersModel.addLickedProperty(id, email);
+
+    // res.json({ id, email });
+    res.json({ usersModell });
+  } catch (err) {
+    res.json(err);
+    console.log(err);
+  }
+});
+router.get("/lickedPropertiesByUser", async (req, res) => {
+  try {
+    const user = await usersModel.selectUserByMail(req.query.email);
+
+    console.log("req.query.email", req.query.email);
+    // res.json(user);
+    const properties = user[0].likedProperties;
+    console.log("user[0].likedProperties", user[0].likedProperties);
+
+    // res.json(properties);
+    // }
+    // catch (err) {
+    //   console.log(err);
+    //   res.json(err);
+    // }
+    // });
+    // router.get("/getLickedPropertiesById", async (req, res) => {
+    // try {
+    console.log("this is working");
+    console.log("req.query", req.query);
+    ///////////////////////////////
+
+    const propertyById = await propertiesModel.selectPropertyById(properties);
+    // const propertyById = await propertiesModel.selectPropertyById(req.query.id);
+    res.json(propertyById);
+    console.log("propertyById", propertyById);
+  } catch (err) {
+    res.json(err);
+    console.log("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err);
+  }
+});
+
+router.put("/removeFavoriteProp/:id", async (req, res) => {
+  const _id = req.query.id;
+  const email = req.query.email;
+  console.log("req1", req.query);
+  try {
+    console.log("_id pased drom react", _id);
+    console.log("email pased from react", email);
+
+    const property = await usersModel.removeLickedProperty(_id, email);
+
+    if (!property) {
+      res.json("cant find the card");
+    }
+
+    // res.json(property);
+    res.json(property);
+    console.log(property);
+
+    // if (property) {
+    // }
   } catch (err) {
     res.json(err);
     console.log(err);
