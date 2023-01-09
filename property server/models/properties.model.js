@@ -3,12 +3,14 @@ const usersModel = require("../models/users.model");
 const Schema = mongoose.Schema;
 /* create user schema */ const propertiesSchema = new Schema({
   // img: { type: Image, required: false },
-  // img: { type: String },
 
   price: { type: Number, required: true },
   description: { type: String, required: true },
+  city: { type: String, required: true },
   address: { type: String, required: true },
+  img: { type: String, required: false },
   userEmail: { type: String, required: true },
+  extraInfo: { type: String, required: true },
 });
 
 //create conllection
@@ -16,17 +18,24 @@ const Schema = mongoose.Schema;
 const Properties = mongoose.model("Properties", propertiesSchema);
 //this function will create new user
 
-const insertProperty = (price, description, address, userEmail) => {
+const insertProperty = (
+  price,
+  description,
+  city,
+  address,
+  img,
+  userEmail,
+  extraInfo
+) => {
   const property = new Properties({
-    // img:
-    //   req.body.img ??
-    //   "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-    // img,
-
     price,
     description,
+    city,
     address,
+
+    img,
     userEmail,
+    extraInfo,
   });
 
   return property.save();
@@ -70,12 +79,16 @@ const selectPropertyByUser = (filter) => {
   console.log("filter", filter);
   return Properties.find({ userEmail: { $eq: filter.userEmail } });
 };
-const selectPropertyByAddress = (filter) => {
-  return Properties.find({ address: { $eq: filter.address } });
+const selectPropertyByCity = (filter) => {
+  return Properties.find({ city: { $eq: filter.city } });
 };
+// const selectPropertyByAddress = (filter) => {
+//   return Properties.find({ address: { $eq: filter.address } });
+// };
 const selectPropertyByMaxPrice = (filter) => {
   return Properties.find({ price: { $lte: filter.price } });
 };
+
 const selectPropertyByMinPrice = (filter) => {
   return Properties.find({ price: { $gte: filter.price } });
 };
@@ -102,10 +115,11 @@ module.exports = {
   selectAllProperties,
   selectPropertyById,
   deleteProperty,
-  selectPropertyByAddress,
   selectPropertyByMaxPrice,
   selectPropertyByMinPrice,
   selectPropertyByUser,
   // selectByIds,
   findByIdAndUpdate,
+  selectPropertyByCity,
+  // selectPropertyByAddress,
 };

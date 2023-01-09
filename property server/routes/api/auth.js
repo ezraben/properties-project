@@ -11,7 +11,7 @@ const sendEmail = require("../../config/mailer");
 const crypto = require("../../config/crypto");
 /////////////////////
 router.post("/signup", upLoadMulter.single("img"), async (req, res) => {
-  console.log(req.file);
+  console.log("req.file", req.file);
   try {
     const validatedValue = await userValidation.validateSignupSchema(req.body);
     console.log("validatedValue", validatedValue);
@@ -21,16 +21,30 @@ router.post("/signup", upLoadMulter.single("img"), async (req, res) => {
       throw new CustomMsg(CustomMsg.STATUSES.Failed, "email already exist");
     }
     const hashedPassword = await bcrypt.createHash(validatedValue.password);
-    const newUserData = await usersModule.insertUser(
-      validatedValue.firstName,
-      validatedValue.lastName,
-      validatedValue.email,
-      hashedPassword,
-      req.file.filename,
-      // req.file,
-      validatedValue.phone,
-      validatedValue.isAdmin
-    );
+    if (!req.file) {
+      const newUserData = await usersModule.insertUser(
+        validatedValue.firstName,
+        validatedValue.lastName,
+        validatedValue.email,
+        hashedPassword,
+        // req.file,
+        validatedValue.phone,
+        //  req.file.filename,
+        validatedValue.isAdmin
+      );
+    } else {
+      const newUserData = await usersModule.insertUser(
+        validatedValue.firstName,
+        validatedValue.lastName,
+        validatedValue.email,
+        hashedPassword,
+        // req.file,
+        validatedValue.phone,
+        req.file.filename,
+        validatedValue.isAdmin
+      );
+    }
+
     // console.log("req.file", req.file);
     let token = await jwt.generateToken({ email: validatedValue.email });
     if (token) {
@@ -191,17 +205,24 @@ router.post("/login", async (req, res) => {
         CustomMsg.STATUSES.Failed,
         "invalid email or password"
       );
-    } else {
+    }
+    ////////////////
+    ////////
+    // test for token
+    else {
       let token = await jwt.generateToken({ email: userData[0].email });
       const isAdmin = userData[0].isAdmin;
 
       res.json(new CustomMsg(CustomMsg.STATUSES.Success, token, isAdmin));
     }
+    ////////////////
+    ////////
+    // test for token
 
     ///////////////////
     ////////////////
     //befro addind is admin
-    //  else {
+    // else {
     //   let token = await jwt.generateToken({ email: userData[0].email });
     //   const isAdmin = userData[0].isAdmin;
 
@@ -228,6 +249,7 @@ router.post("/forgetPassword", async (req, res) => {
       );
     }
     const secretKey = generateRandAlphaNum(8);
+
     const encryptedData = crypto.encrypt(validatedValue.email);
     // const urlSecretKey = `http://localhost:3000/recoverPassword/${secretKey}/${validatedValue.email}`;
     const urlSecretKey = `http://localhost:3000/recoverPassword/${secretKey}/${encryptedData.iv}/${encryptedData.encryptedData}`;
@@ -239,7 +261,7 @@ router.post("/forgetPassword", async (req, res) => {
       to: validatedValue.email,
       subject: "Your recovery email",
       html: ` <h1>your recovery link</h1>
-      <a href="${urlSecretKey}">here</a>`,
+      <a href="${urlSecretKey}">click here to update your password</a>`,
     });
     res.json(
       new CustomMsg(
@@ -249,7 +271,7 @@ router.post("/forgetPassword", async (req, res) => {
     );
   } catch (err) {
     res.json(err);
-    console.log(err);
+    // console.log(err);
   }
 });
 

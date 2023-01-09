@@ -96,9 +96,17 @@ const propertiesValidation = require("../../validation/property.validation");
 ////////////////////////////////////////////////////
 //until here ipi hat works with react but no multer
 
-router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
+////////////////////////////////////?
+//from here trying to add url for property img - taking off multer
+router.post("/", async (req, res) => {
   try {
     const userEmail = req.query.userEmail;
+    console.log(userEmail);
+    if (!req.body.img) {
+      req.body.img =
+        // req.body.img ??
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+    }
 
     const validateValue = await propertiesValidation.validatePropertySchema(
       req.body
@@ -109,8 +117,11 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
         // req.file.filename,
         validateValue.price,
         validateValue.description,
+        validateValue.city,
         validateValue.address,
-        userEmail
+        validateValue.img,
+        userEmail,
+        validateValue.extraInfo
 
         // validateValue.img
         // req.file.filename
@@ -129,6 +140,42 @@ router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
     console.log(err);
   }
 });
+////////////////////////////////////?
+//until here trying to add url for property img - taking off multer
+//////////////////////////////!
+// router.post("/", upLoadMulter.single("propertyImg"), async (req, res) => {
+//   try {
+//     const userEmail = req.query.userEmail;
+
+//     const validateValue = await propertiesValidation.validatePropertySchema(
+//       req.body
+//     );
+
+//     if (validateValue) {
+//       const newUserData = await propertiesModel.insertProperty(
+//         // req.file.filename,
+//         validateValue.price,
+//         validateValue.description,
+//         validateValue.address,
+//         userEmail
+
+//         // validateValue.img
+//         // req.file.filename
+//         // validateValue.propertyImg,
+//         // validateValue.price,
+//         // validateValue.description,
+//         // validateValue.address
+//         // req.file.filename
+//       );
+//       console.log("req.file", req.file);
+//       res.json("property created successfully");
+//     }
+//     console.log(req.body);
+//   } catch (err) {
+//     res.json(err);
+//     console.log(err);
+//   }
+// });
 
 ///////////////////////////////////////
 // until here multer, from here CRUD
@@ -156,10 +203,22 @@ router.get("/allCards", async (req, res) => {
 });
 //////////////////
 // get all  cards !!works
-router.post("/filter", async (req, res) => {
+router.get("/specificProperty", async (req, res) => {
   try {
-    const properties = await propertiesModel.selectPropertyByAddress({
-      address: req.body.address,
+    const id = req.query.id;
+    const property = await propertiesModel.selectPropertyById(id);
+    console.log("property", property);
+
+    res.json(property);
+  } catch (err) {
+    res.json(err);
+  }
+});
+
+router.post("/filterByCity", async (req, res) => {
+  try {
+    const properties = await propertiesModel.selectPropertyByCity({
+      city: req.body.city,
     });
 
     console.log(properties);
@@ -167,16 +226,26 @@ router.post("/filter", async (req, res) => {
 
     res.json(properties);
   } catch (err) {
+    // try {
+    //   const properties = await propertiesModel.selectPropertyByAddress({
+    //     address: req.body.address,
+    //   });
+
+    //   console.log(properties);
+    //   console.log(req.body);
+
+    //   res.json(properties);
+    // }
     res.json(err);
   }
 });
 
-router.post("/filterByPrice", async (req, res) => {
+router.post("/filterByMaxPrice", async (req, res) => {
   try {
     // const filterBy = { address: req.body };
 
     const properties = await propertiesModel.selectPropertyByMaxPrice({
-      price: req.body.price,
+      price: req.body.maxPrice,
     });
 
     res.json(properties);
@@ -189,7 +258,7 @@ router.post("/filterByMinPrice", async (req, res) => {
     // const filterBy = { address: req.body };
 
     const properties = await propertiesModel.selectPropertyByMinPrice({
-      price: req.body.price,
+      price: req.body.minPrice,
     });
 
     res.json(properties);
@@ -352,45 +421,5 @@ router.put("/removeFavoriteProp/:id", async (req, res) => {
     console.log(err);
   }
 });
-
-/////////////////////////////////////////////////////////////
-/////////////
-//down from here the 2 api that kind of work with react but not getting the cards at lodad, and need some time more them one function to get all cards
-// router.get("/lickedPropertiesByUser", async (req, res) => {
-//   try {
-//     const user = await usersModel.selectUserByMail(req.query.email);
-//     console.log("req.query.email", req.query.email);
-//     // res.json(user);
-//     const properties = user[0].likedProperties;
-//     console.log("user[0].likedProperties", user[0].likedProperties);
-
-//     res.json(properties);
-//   } catch (err) {
-//     console.log(err);
-//     res.json(err);
-//   }
-// });
-// router.get("/getLickedPropertiesById", async (req, res) => {
-//   try {
-//     console.log("this is working");
-//     console.log("req.query", req.query);
-//     ///////////////////////////////
-//     //dlaat work
-//     // const propertyById = await propertiesModel.selectByIds(req.query.id);
-//     ///////////////////////////////
-//     //dlaat work
-
-//     //console.log(cards);
-//     const propertyById = await propertiesModel.selectPropertyById(req.query.id);
-//     res.json(propertyById);
-//     console.log("propertyById", propertyById);
-//   } catch (err) {
-//     res.json(err);
-//     console.log("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", err);
-//   }
-// });
-/////////////////////////////////////////////////////////////
-/////////////
-//until here the 2 api that kind of work with react but not getting the cards at lodad, and need some time more them one function to get all cards
 
 module.exports = router;

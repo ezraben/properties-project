@@ -8,9 +8,8 @@ const Schema = mongoose.Schema;
   password: { type: String, required: true },
   // confirmPassword: { type: String, required: true },
 
-  img: { type: String },
-
   phone: { type: String },
+  img: { type: String },
   // isAdmin: { type: Boolean },
   // isAdmin: { type: String, required: true },
   isAdmin: { type: Boolean, required: true, default: false },
@@ -31,8 +30,8 @@ const insertUser = (
   email,
   password,
   // confirmPassword,
-  img,
   phone,
+  img,
   isAdmin,
   likedProperties
 ) => {
@@ -42,8 +41,8 @@ const insertUser = (
     email,
     password,
     // confirmPassword,
-    img,
     phone,
+    img,
     isAdmin,
     likedProperties,
   });
