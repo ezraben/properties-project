@@ -269,37 +269,45 @@ router.post("/filterByMinPrice", async (req, res) => {
 
 ///////////////////////////////////////////
 
-router.put("/:id/:price/:description/:address", async (req, res) => {
-  //   // router.put("/:id/:price/:description/:address", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const data = {
-      price: req.params.price,
-      description: req.params.description,
-      address: req.params.address,
-    };
+router.put(
+  "/:id/:price/:description/:city/:address/:extraInfo",
+  async (req, res) => {
+    //   // router.put("/:id/:price/:description/:address", async (req, res) => {
+    try {
+      const id = req.params.id;
+      const data = {
+        price: req.params.price,
+        description: req.params.description,
+        city: req.params.city,
+        address: req.params.address,
+        extraInfo: req.params.extraInfo,
+      };
 
-    const validateValue = await propertiesValidation.validatePropertySchema(
-      // req.body
-      data
-    );
-
-    if (validateValue) {
-      const newUserData = await propertiesModel.findByIdAndUpdate(
-        id,
-        validateValue.price,
-        validateValue.description,
-        validateValue.address
-        // validateValue.img,
+      const validateValue = await propertiesValidation.validatePropertySchema(
+        // req.body
+        data
       );
 
-      res.json("property upDated  successfully");
+      if (validateValue) {
+        const newUserData = await propertiesModel.findByIdAndUpdate(
+          id,
+          validateValue.price,
+          validateValue.description,
+          validateValue.city,
+          validateValue.address,
+          validateValue.extraInfo
+          // validateValue.img,
+        );
+        console.log("newUserData", newUserData);
+
+        res.json("property upDated  successfully");
+      }
+    } catch (err) {
+      console.log(err);
+      res.json(err);
     }
-  } catch (err) {
-    console.log(err);
-    res.json(err);
   }
-});
+);
 
 router.delete("/:id", async (req, res) => {
   const _id = req.params.id;

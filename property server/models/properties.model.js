@@ -101,11 +101,20 @@ const deleteProperty = (_id) => {
   return Properties.findOneAndDelete({ _id });
 };
 
-const findByIdAndUpdate = (_id, price, description, address) => {
+const findByIdAndUpdate = (
+  _id,
+  price,
+  description,
+  city,
+  address,
+  extraInfo
+) => {
   return Properties.findByIdAndUpdate(_id, {
     price: price,
     description: description,
+    city: city,
     address: address,
+    extraInfo: extraInfo,
   });
 };
 
