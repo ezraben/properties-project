@@ -1,5 +1,4 @@
 const Joi = require("Joi");
-//firstName, lastName, email, password, phone
 
 const firstNameRole = {
   firstName: Joi.string().min(2).max(255).trim().alphanum().required(),
@@ -32,7 +31,6 @@ const confirmPasswordRole = {
 
 const imgRole = {
   img: Joi.any(),
-  // img: Joi.string().min(3).max(255).trim(),
 };
 const phoneRole = {
   phone: Joi.string().min(3).max(255).trim(),
