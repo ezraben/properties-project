@@ -5,9 +5,9 @@ const CustomResponse = require("../classes/CustomResponse");
 module.exports = async (req, res, next) => {
   try {
     let dataFromToken = await jwt.verifyToken(req.headers["x-auth-token"]);
-    // console.log("dataFromToken", dataFromToken);
+
     let userData = await usersModel.selectUserByMail(dataFromToken.email);
-    // console.log(req.userData);
+
     if (userData.length <= 0) {
       throw new CustomResponse(CustomResponse.STATUSES.failed, "invalid token");
     }

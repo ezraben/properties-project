@@ -27,7 +27,6 @@ const insertProperty = (
     description,
     city,
     address,
-
     img,
     userEmail,
     extraInfo,
@@ -41,7 +40,7 @@ const selectAllProperties = () => {
 };
 
 const selectPropertyByUser = (filter) => {
-  console.log("filter", filter);
+  
   return Properties.find({ userEmail: { $eq: filter.userEmail } });
 };
 const selectPropertyByCity = (filter) => {
@@ -70,6 +69,7 @@ const findByIdAndUpdate = (
   description,
   city,
   address,
+  
   extraInfo
 ) => {
   return Properties.findByIdAndUpdate(_id, {
@@ -77,6 +77,7 @@ const findByIdAndUpdate = (
     description: description,
     city: city,
     address: address,
+    
     extraInfo: extraInfo,
   });
 };

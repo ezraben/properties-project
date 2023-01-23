@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form
+      method="post"
+      action="http://localhost:3001/api/auth/signup"
+      enctype="multipart/form-data"
+    >
+      <div>
+        <label for="firstName">firstName</label>
+        <input type="text" name="firstName" id="firstName" />
+      </div>
+
+      <div>
+        <label for="lastName">lastName</label>
+        <input type="text" name="lastName" id="lastName" />
+      </div>
+
+      <div>
+        <label for="email">email</label>
+        <input type="email" name="email" id="email" />
+      </div>
+      <div>
+        <label for="password">password</label>
+        <input type="password" name="password" id="password" />
+      </div>
+      <div>
+        <label for="confirmPassword">confirmPassword</label>
+        <input
+          type="confirmPassword"
+          name="confirmPassword"
+          id="confirmPassword"
+        />
+      </div>
+      <div>
+        <label for="phone">phone</label>
+        <input type="text" name="phone" id="phone" />
+      </div>
+      <div>
+        <label for="isAdmin">isAdmin</label>
+        <input type="text" name="isAdmin" id="isAdmin" />
+      </div>
+      <div>
+        <label for="profileImg">img</label>
+        <input type="file" name="profileImg" id="profileImg" />
+      </div>
+
+      <button>create</button>
+    </form>
+  </body>
+</html>

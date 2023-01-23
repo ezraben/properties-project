@@ -2,61 +2,44 @@ const express = require("express");
 const router = express.Router();
 const usersModule = require("../../models/users.model");
 const userValidation = require("../../validation/user.validation");
-const upLoadMulter = require("../../config/multer");
+
 const bcrypt = require("../../config/bcrypt");
 const CustomMsg = require("../../classes/CustomMsg");
 const jwt = require("../../config/jwt");
 const generateRandAlphaNum = require("../../util/randomAlphaNum");
 const sendEmail = require("../../config/mailer");
 const crypto = require("../../config/crypto");
-/////////////////////
-router.post("/signup", upLoadMulter.single("img"), async (req, res) => {
-  console.log("req.file", req.file);
+
+router.post("/signup", async (req, res) => {
   try {
     const validatedValue = await userValidation.validateSignupSchema(req.body);
-    console.log("validatedValue", validatedValue);
+
     const userData = await usersModule.selectUserByMail(validatedValue.email);
 
     if (userData.length > 0) {
       throw new CustomMsg(CustomMsg.STATUSES.Failed, "email already exist");
     }
     const hashedPassword = await bcrypt.createHash(validatedValue.password);
-    if (!req.file) {
-      const newUserData = await usersModule.insertUser(
-        validatedValue.firstName,
-        validatedValue.lastName,
-        validatedValue.email,
-        hashedPassword,
-        validatedValue.phone,
-        (img =
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"),
-        // req.file,
-        //  req.file.filename,
-        validatedValue.isAdmin
-      );
-    } else {
-      const newUserData = await usersModule.insertUser(
-        validatedValue.firstName,
-        validatedValue.lastName,
-        validatedValue.email,
-        hashedPassword,
-        // req.file,
-        validatedValue.phone,
-        req.file.filename,
-        validatedValue.isAdmin
-      );
-    }
 
-    // console.log("req.file", req.file);
+    const newUserData = await usersModule.insertUser(
+      validatedValue.firstName,
+      validatedValue.lastName,
+      validatedValue.email,
+      hashedPassword,
+      validatedValue.phone,
+
+      validatedValue.isAdmin
+     
+    );
+    
+
+    
     let token = await jwt.generateToken({ email: validatedValue.email });
     if (token) {
       res.json(new CustomMsg(CustomMsg.STATUSES.Success, token));
       return;
     }
-    // res.json(
-    //   new CustomMsg(CustomMsg.STATUSES.Success, "new user created")
-    //   // new CustomResponse(CustomResponse.STATUSES.ok, "new user created")
-    // );
+    
   } catch (err) {
     console.log("err", err);
 
@@ -80,37 +63,21 @@ router.post("/login", async (req, res) => {
       userData[0].password
     );
     if (!hashResult) {
-      // throw { status: STATUSES.Failed", msg: "invalid email or password" };
+      
       throw new CustomMsg(
         CustomMsg.STATUSES.Failed,
         "invalid email or password"
       );
     }
-    ////////////////
-    ////////
-    // test for token
+   
     else {
       let token = await jwt.generateToken({ email: userData[0].email });
       const isAdmin = userData[0].isAdmin;
 
       res.json(new CustomMsg(CustomMsg.STATUSES.Success, token, isAdmin));
     }
-    ////////////////
-    ////////
-    // test for token
-
-    ///////////////////
-    ////////////////
-    //befro addind is admin
-    // else {
-    //   let token = await jwt.generateToken({ email: userData[0].email });
-    //   const isAdmin = userData[0].isAdmin;
-
-    //   res.json(new CustomMsg(CustomMsg.STATUSES.Success, token));
-    // }
-    ///////////////////
-    ////////////////
-    //befro addind is admin
+   
+  
   } catch (err) {
     res.json(err);
     console.log(err);
@@ -131,9 +98,9 @@ router.post("/forgetPassword", async (req, res) => {
     const secretKey = generateRandAlphaNum(8);
 
     const encryptedData = crypto.encrypt(validatedValue.email);
-    // const urlSecretKey = `http://localhost:3000/recoverPassword/${secretKey}/${validatedValue.email}`;
+    
     const urlSecretKey = `http://localhost:3000/recoverPassword/${secretKey}/${encryptedData.iv}/${encryptedData.encryptedData}`;
-    // const urlSecretKey = `http://localhost:${process.env.PORT}/api/recoverPassword/${secretKey}`;
+    
     const expDate = new Date(Date.now() + 1800000);
     await usersModule.upDateRecovery(validatedValue.email, secretKey, expDate);
     sendEmail({
@@ -151,7 +118,7 @@ router.post("/forgetPassword", async (req, res) => {
     );
   } catch (err) {
     res.json(err);
-    // console.log(err);
+    console.log(err);
   }
 });
 
@@ -161,32 +128,22 @@ router.post(
     try {
       const validatedValue =
         await userValidation.validateRecoveryPasswordSchema(req.body);
-      /*
-      get data from params 
-      decrypt the data from the params
-      if ti success then we will get email
-      else we will get @#$%^ gibrish
-      */
+   
       const decryptedEmail = crypto.decrypt({
         iv: req.params.iv,
         encryptedData: req.params.encryptedData,
       });
 
-      /*
-      \check if it success or fail
-        
-       */
+    
       const validateEmail =
         await userValidation.validateRecoveryPasswordValidateEmailSchema({
           email: decryptedEmail,
         });
       const userData = await usersModule.selectUserByMail(
-        // req.params.encryptedEmail
+        
         validateEmail.email
       );
-      console.log("decryptedEmail", decryptedEmail);
-      console.log("validateEmail", validateEmail);
-      console.log("userData", userData);
+     
       if (userData.length <= 0) {
         throw new CustomMsg(CustomMsg.STATUSES.Failed, "something went wrong");
       }
@@ -199,7 +156,7 @@ router.post(
       get the exp date from database and convert it to number
       if the number from the db smaller then now then the revocery expired*/
       if (nowDT.getTime() > userData[0].recovery.dateRecovery.getTime()) {
-        // if (nowDT.getTime() > usersData[0].recovery.dateRecovery.getTime()) {
+        
         throw new CustomResponse(
           CustomResponse.STATUSES.fail,
           "something went wrong"

@@ -29,9 +29,7 @@ const confirmPasswordRole = {
     .required(),
 };
 
-const imgRole = {
-  img: Joi.any(),
-};
+
 const phoneRole = {
   phone: Joi.string().min(3).max(255).trim(),
 };
@@ -46,7 +44,7 @@ const signupSchema = Joi.object({
   ...emailRole,
   ...passwordRole,
   ...confirmPasswordRole,
-  ...imgRole,
+
   ...phoneRole,
   ...isAdminRole,
 });

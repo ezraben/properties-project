@@ -4,7 +4,6 @@ const { token } = require("morgan");
 const generateToken = (data) => {
   return new Promise((resolve, reject) => {
     jwt.sign(data, process.env.JWT_KEY, (err, token) => {
-      // jwt.sign(data, process.env.JWT_KEY, { expiresIn: "4h" }, (err, token) => {
       if (err) reject(err);
       else resolve(token);
     });

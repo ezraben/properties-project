@@ -14,7 +14,7 @@ const propertiesValidation = require("../../validation/property.validation");
 router.post("/", async (req, res) => {
   try {
     const userEmail = req.query.userEmail;
-    console.log(userEmail);
+
     if (!req.body.img) {
       req.body.img =
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
@@ -34,10 +34,9 @@ router.post("/", async (req, res) => {
         userEmail,
         validateValue.extraInfo
       );
-      console.log("req.file", req.file);
+
       res.json("property created successfully");
     }
-    console.log(req.body);
   } catch (err) {
     res.json(err);
     console.log(err);
@@ -46,7 +45,6 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    console.log("req.query", req.query);
     const properties = await propertiesModel.selectPropertyByUser({
       userEmail: req.query.userEmail,
     });
@@ -70,7 +68,6 @@ router.get("/specificProperty", async (req, res) => {
   try {
     const id = req.query.id;
     const property = await propertiesModel.selectPropertyById(id);
-    console.log("property", property);
 
     res.json(property);
   } catch (err) {
@@ -83,9 +80,6 @@ router.post("/filterByCity", async (req, res) => {
     const properties = await propertiesModel.selectPropertyByCity({
       city: req.body.city,
     });
-
-    console.log(properties);
-    console.log(req.body);
 
     res.json(properties);
   } catch (err) {
@@ -118,6 +112,7 @@ router.post("/filterByMinPrice", async (req, res) => {
 
 router.put(
   "/:id/:price/:description/:city/:address/:extraInfo",
+
   async (req, res) => {
     try {
       const id = req.params.id;
@@ -126,6 +121,7 @@ router.put(
         description: req.params.description,
         city: req.params.city,
         address: req.params.address,
+
         extraInfo: req.params.extraInfo,
       };
 
@@ -140,9 +136,9 @@ router.put(
           validateValue.description,
           validateValue.city,
           validateValue.address,
+
           validateValue.extraInfo
         );
-        console.log("newUserData", newUserData);
 
         res.json("property upDated  successfully");
       }
@@ -155,10 +151,8 @@ router.put(
 
 router.delete("/:id", async (req, res) => {
   const _id = req.params.id;
-  console.log("req1", req.query);
-  try {
-    console.log("_id", _id);
 
+  try {
     const property = await propertiesModel.deleteProperty(_id);
 
     res.json(property);
@@ -174,16 +168,13 @@ router.delete("/:id", async (req, res) => {
 router.get("/likedProperties/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    console.log("id", id);
 
     const property = await propertiesModel.selectPropertyById({
       _id: req.params.id,
     });
     res.json(property);
-    console.log(property);
 
     if (property != 0) {
-      console.log("euston we got a property");
     }
 
     if (!property) {
@@ -197,10 +188,8 @@ router.get("/likedProperties/:id", async (req, res) => {
 
 router.post(`/addLikedPropertyId`, async (req, res) => {
   try {
-    console.log("routes works");
     const id = req.query.id;
     const email = req.query.email;
-    console.log("req.query", req.query);
 
     const usersModell = await usersModel.addLickedProperty(id, email);
 
@@ -214,19 +203,11 @@ router.get("/lickedPropertiesByUser", async (req, res) => {
   try {
     const user = await usersModel.selectUserByMail(req.query.email);
 
-    console.log("req.query.email", req.query.email);
-
     const properties = user[0].likedProperties;
-    console.log("user[0].likedProperties", user[0].likedProperties);
-
-    console.log("this is working");
-    console.log("req.query", req.query);
-    ///////////////////////////////
 
     const propertyById = await propertiesModel.selectPropertyById(properties);
 
     res.json(propertyById);
-    console.log("propertyById", propertyById);
   } catch (err) {
     res.json(err);
     console.log("err", err);
@@ -236,11 +217,8 @@ router.get("/lickedPropertiesByUser", async (req, res) => {
 router.put("/removeFavoriteProp/:id", async (req, res) => {
   const _id = req.query.id;
   const email = req.query.email;
-  console.log("req1", req.query);
-  try {
-    console.log("_id pased drom react", _id);
-    console.log("email pased from react", email);
 
+  try {
     const property = await usersModel.removeLickedProperty(_id, email);
 
     if (!property) {
@@ -248,7 +226,6 @@ router.put("/removeFavoriteProp/:id", async (req, res) => {
     }
 
     res.json(property);
-    console.log(property);
   } catch (err) {
     res.json(err);
     console.log(err);
